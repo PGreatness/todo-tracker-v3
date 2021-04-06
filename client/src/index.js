@@ -12,10 +12,21 @@ const cache = new InMemoryCache({
 		client and server
 	*/
 	dataIdFromObject: object => `${object.__typename}:${object._id}`,
+	typePolicies: {
+		Query: {
+			fields: {
+				getAllEntries: {
+					merge(existing, incoming){
+						return incoming
+					}
+				},
+			},
+		},
+	},
 });
 
 // bad hardcoding, localhost port should match port in the backend's .env file
-const BACKEND_LOCATION = 'http://localhost:3001/graphql';
+const BACKEND_LOCATION = 'http://localhost:4000/graphql';
 
 const client = new ApolloClient({
 	uri: BACKEND_LOCATION,
