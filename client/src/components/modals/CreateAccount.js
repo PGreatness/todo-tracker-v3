@@ -41,8 +41,6 @@ const CreateAccount = (props) => {
 	};
 
 	return (
-        // Replace div with WModal
-
 		<div className="signup-modal">
 			<WModal visible={isVisible}>
 				<WMHeader>
