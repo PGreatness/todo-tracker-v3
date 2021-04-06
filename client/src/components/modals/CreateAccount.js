@@ -8,7 +8,7 @@ const CreateAccount = (props) => {
 	const [input, setInput] = useState({ email: '', password: '', firstName: '', lastName: '' });
 	const [loading, toggleLoading] = useState(false);
 	const [Register] = useMutation(REGISTER);
-
+	const [isVisible, setVisible] = useState(true);
 	
 	const updateInput = (e) => {
 		const { name, value } = e.target;
@@ -44,14 +44,9 @@ const CreateAccount = (props) => {
         // Replace div with WModal
 
 		<div className="signup-modal">
-			<div className="modal-header" onClose={() => props.setShowCreate(false)}>
-				Sign Up
-			</div>
-
-			{
-				loading ? <div />
-					: <div>
-						<WRow className="modal-col-gap signup-modal">
+			<WModal visible={isVisible}>
+				<WMHeader>
+				<WRow className="modal-col-gap signup-modal">
 							<WCol size="6">
 								<WInput 
 									className="" onBlur={updateInput} name="firstName" labelAnimation="up" 
@@ -76,11 +71,16 @@ const CreateAccount = (props) => {
 							className="modal-input" onBlur={updateInput} name="password" labelAnimation="up" 
 							barAnimation="solid" labelText="Password" wType="outlined" inputType="password" 
 						/>
-					</div>
-			}
+				</WMHeader>
+				<WMFooter>
 			<WButton className="modal-button" onClick={handleCreateAccount} span clickAnimation="ripple-light" hoverAnimation="darken" shape="rounded" color="primary">
 				Submit
 			</WButton>
+			<WButton className="modal-button" onClick={() => {props.setShowCreate(false);setVisible(false)}} span clickAnimation="ripple-light" hoverAnimation="darken" shape="rounded" color="transparent">
+				Close
+			</WButton>
+				</WMFooter>
+			</WModal>
 		</div>
 	);
 }
