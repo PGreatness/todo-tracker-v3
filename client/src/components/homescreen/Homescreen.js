@@ -230,6 +230,7 @@ const Homescreen = (props) => {
 									editItem={editItem} reorderItem={reorderItem}
 									setShowDelete={setShowDelete}
 									activeList={activeList} setActiveList={setActiveList}
+									clear={()=>props.tps.clearAllTransactions()}
 								/>
 							</div>
 						:

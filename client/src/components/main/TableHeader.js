@@ -29,7 +29,7 @@ const TableHeader = (props) => {
                     <WButton onClick={props.disabled ? clickDisabled : props.setShowDelete} wType="texted" className={`${buttonStyle}`}>
                         <i className="material-icons">delete_outline</i>
                     </WButton>
-                    <WButton onClick={props.disabled ? clickDisabled : () => props.setActiveList({})} wType="texted" className={`${buttonStyle}`}>
+                    <WButton onClick={props.disabled ? clickDisabled : () => {props.clear();props.setActiveList({})}} wType="texted" className={`${buttonStyle}`}>
                         <i className="material-icons">close</i>
                     </WButton>
                 </div>
