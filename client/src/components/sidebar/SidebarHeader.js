@@ -2,6 +2,7 @@ import React                    from 'react';
 import { WButton, WRow, WCol }  from 'wt-frontend';
 
 const SidebarHeader = (props) => {
+    let empty = Object.keys(props.active).length == 0
     return (
         <WRow className='sidebar-header'>
             <WCol size="7">
@@ -13,8 +14,8 @@ const SidebarHeader = (props) => {
             <WCol size="5">
                 {
                     props.auth && <div className="sidebar-options">
-                        <WButton className="sidebar-buttons" onClick={props.createNewList} clickAnimation="ripple-light" shape="rounded" color="primary">
-                            <i className="material-icons">add</i>
+                        <WButton className="sidebar-buttons" onClick={()=>{if (empty) props.createNewList()}} clickAnimation="ripple-light" shape="rounded" color="primary">
+                            <i className="material-icons" style={{color: empty ? "" : "rgb(50,50,49)", backgroundColor: empty ? "" : "rgb(97,97,96)"}}>add</i>
                         </WButton>
                         <WButton className="sidebar-buttons undo-redo" onClick={props.undo} wType="texted" clickAnimation="ripple-light" shape="rounded">
                             <i className="material-icons" style={{color: props.canUndo() ? "" : "rgb(97, 97, 96)"}}>undo</i>

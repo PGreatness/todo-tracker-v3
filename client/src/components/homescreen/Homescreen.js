@@ -215,6 +215,7 @@ const Homescreen = (props) => {
 								updateListField={updateListField}
 								canUndo={()=>props.tps.hasTransactionToUndo()}
 								canRedo={()=>props.tps.hasTransactionToRedo()}
+								active={activeList}
 							/>
 							:
 							<></>
