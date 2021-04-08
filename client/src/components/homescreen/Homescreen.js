@@ -33,7 +33,6 @@ const Homescreen = (props) => {
 	const [DeleteTodoItem] 			= useMutation(mutations.DELETE_ITEM);
 	const [AddTodolist] 			= useMutation(mutations.ADD_TODOLIST);
 	const [AddTodoItem] 			= useMutation(mutations.ADD_ITEM);
-	const [UpdateTodolist]          = useMutation(mutations.UPDATE_TODOLIST)
 
 
 	const { loading, error, data, refetch } = useQuery(GET_DB_TODOS);
