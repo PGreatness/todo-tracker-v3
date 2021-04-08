@@ -25,6 +25,7 @@ const Homescreen = (props) => {
 	const [showDelete, toggleShowDelete] 	= useState(false);
 	const [showLogin, toggleShowLogin] 		= useState(false);
 	const [showCreate, toggleShowCreate] 	= useState(false);
+	const [sorts, setSorts]                 = useState([false, false, false, false]);
 
 	const [ReorderTodoItems] 		= useMutation(mutations.REORDER_ITEMS);
 	const [UpdateTodoItemField] 	= useMutation(mutations.UPDATE_ITEM_FIELD);
@@ -169,7 +170,20 @@ const Homescreen = (props) => {
 		refetch();
 	};
 
-	
+	// SORTS
+	const descriptionSorter = (a, b) => {
+		return a.description.localeCompare(b.description);
+	}
+	const sortDescription = () => {
+		let copy = clone(activeList);
+		copy.items.sort(descriptionSorter);
+		if (sorts[0]) copy.items.reverse();
+		setSorts([!sorts[0], sorts[1], sorts[2]]);
+		setActiveList(copy);
+		refetch();
+	}
+
+	const clone = (object) => JSON.parse(JSON.stringify(activeList));
 	/*
 		Since we only have 3 modals, this sort of hardcoding isnt an issue, if there
 		were more it would probably make sense to make a general modal component, and
@@ -238,9 +252,12 @@ const Homescreen = (props) => {
 									setShowDelete={setShowDelete}
 									undo={tpsUndo} redo={tpsRedo}
 									activeList={activeList} setActiveList={setActiveList}
+									getActiveList={()=>activeList}
 									clear={()=>props.tps.clearAllTransactions()}
 									canUndo={()=>props.tps.hasTransactionToUndo()}
 									canRedo={()=>props.tps.hasTransactionToRedo()}
+
+									descSort={sortDescription}
 								/>
 							</div>
 						:
