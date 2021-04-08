@@ -33,6 +33,7 @@ const Homescreen = (props) => {
 	const [DeleteTodoItem] 			= useMutation(mutations.DELETE_ITEM);
 	const [AddTodolist] 			= useMutation(mutations.ADD_TODOLIST);
 	const [AddTodoItem] 			= useMutation(mutations.ADD_ITEM);
+	const [UpdateTodolist]          = useMutation(mutations.UPDATE_TODOLIST)
 
 
 	const { loading, error, data, refetch } = useQuery(GET_DB_TODOS);
@@ -79,7 +80,7 @@ const Homescreen = (props) => {
 			id: lastID,
 			description: 'No Description',
 			due_date: 'No Date',
-			assigned_to: props.user._id,
+			assigned_to: 'Unassigned',
 			completed: false
 		};
 		let opcode = 1;
@@ -112,6 +113,9 @@ const Homescreen = (props) => {
 		let flag = 0;
 		if (field === 'completed') flag = 1;
 		let listID = activeList._id;
+		let item = activeList.items.find(todo => todo._id === itemID)[field];
+		if (item === value) return;
+		if (item === ('complete' === value)) return;
 		let transaction = new EditItem_Transaction(listID, itemID, field, prev, value, flag, UpdateTodoItemField);
 		props.tps.addTransaction(transaction);
 		tpsRedo();
@@ -138,14 +142,14 @@ const Homescreen = (props) => {
 		}
 		const { data } = await AddTodolist({ variables: { todolist: list }, refetchQueries: [{ query: GET_DB_TODOS }] });
 		setActiveList(list)
-		// props.tps.clearAllTransactions();
+		props.tps.clearAllTransactions();
 	};
 
 	const deleteList = async (_id) => {
 		DeleteTodolist({ variables: { _id: _id }, refetchQueries: [{ query: GET_DB_TODOS }] });
 		refetch();
 		setActiveList({});
-		// props.tps.clearAllTransactions();
+		props.tps.clearAllTransactions();
 	};
 
 	const updateListField = async (_id, field, value, prev) => {
@@ -155,10 +159,15 @@ const Homescreen = (props) => {
 
 	};
 
-	const handleSetActive = (id) => {
+	const handleSetActive = async (id) => {
 		const todo = todolists.find(todo => todo.id === id || todo._id === id);
 		if (todo !== activeList) props.tps.clearAllTransactions();
+		let copy = todolists.filter((todos) => todos !== todo);
+		copy = [todo].concat(copy);
+		todolists = copy;
+		console.log(copy);
 		setActiveList(todo);
+		refetch();
 	};
 
 	
@@ -210,11 +219,9 @@ const Homescreen = (props) => {
 						activeList ?
 							<SidebarContents
 								todolists={todolists} activeid={activeList.id} auth={auth}
+								getToDos={()=>todolists}
 								handleSetActive={handleSetActive} createNewList={createNewList}
-								undo={tpsUndo} redo={tpsRedo}
 								updateListField={updateListField}
-								canUndo={()=>props.tps.hasTransactionToUndo()}
-								canRedo={()=>props.tps.hasTransactionToRedo()}
 								active={activeList}
 							/>
 							:
@@ -230,8 +237,11 @@ const Homescreen = (props) => {
 									addItem={addItem} deleteItem={deleteItem}
 									editItem={editItem} reorderItem={reorderItem}
 									setShowDelete={setShowDelete}
+									undo={tpsUndo} redo={tpsRedo}
 									activeList={activeList} setActiveList={setActiveList}
 									clear={()=>props.tps.clearAllTransactions()}
+									canUndo={()=>props.tps.hasTransactionToUndo()}
+									canRedo={()=>props.tps.hasTransactionToRedo()}
 								/>
 							</div>
 						:
