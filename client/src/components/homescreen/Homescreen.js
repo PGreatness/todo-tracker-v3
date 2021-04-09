@@ -263,31 +263,29 @@ const Homescreen = (props) => {
 		let platform = window.navigator.platform;
 		let mac = platform.toLowerCase().indexOf('mac') >= 0;
 		if (mac) {
-			if (ev.code.toLowerCase() === 'keyz' && ev.metaKey && !ev.shiftKey && !ev.repeat){
+			if (ev.key.toLowerCase() === 'z' && ev.metaKey && !ev.shiftKey && !ev.repeat){
 				console.log('1')
-				if (props.tps.hasTransactionToUndo()) tpsUndo();
+				if (props.tps.hasTransactionToUndo()) await tpsUndo();
 			}
-			else if (ev.code.toLowerCase() == 'keyz' && ev.metaKey && ev.shiftKey && !ev.repeat) {
+			else if (ev.key.toLowerCase() == 'z' && ev.metaKey && ev.shiftKey && !ev.repeat) {
 				console.log('2')
 
-				if (props.tps.hasTransactionToRedo()) tpsRedo();
+				if (props.tps.hasTransactionToRedo()) await tpsRedo();
 			}
 		}else{
-			if (ev.code.toLowerCase() == 'keyz' && ev.ctrlKey) {
+			if (ev.key.toLowerCase() == 'z' && ev.ctrlKey) {
 				console.log('3')
-				if (props.tps.hasTransactionToUndo()) tpsUndo();
+				if (props.tps.hasTransactionToUndo()) await tpsUndo();
 			}
-			else if (ev.code.toLowerCase() == 'keyy' && ev.ctrlKey) {
+			else if (ev.key.toLowerCase() == 'y' && ev.ctrlKey) {
 				console.log('4')
-				if (props.tps.hasTransactionToRedo()) tpsRedo();
+				if (props.tps.hasTransactionToRedo()) await tpsRedo();
 			}
 		}
 	}
 
-	window.addEventListener('keydown', handleKeypressTransaction);
-
 	return (
-		<WLayout wLayout="header-lside">
+		<WLayout wLayout="header-lside" onKeyDown={handleKeypressTransaction} tabIndex={0}>
 			<WLHeader>
 				<WNavbar color="colored">
 					<ul>
