@@ -11,7 +11,7 @@ const TableHeader = (props) => {
         props.sortDesc();
         let arrows = document.getElementsByClassName('sort-arrow');
         while (arrows[0]) arrows[0].remove();
-        e.currentTarget.innerHTML = !props.sorts[0] ?
+        e.currentTarget.innerHTML = props.sorts[0] ?
             `Task<i class='material-icons sort-arrow'>arrow_upward</i>` :
             `Task<i class='material-icons sort-arrow'>arrow_downward</i>`;
     }

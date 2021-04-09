@@ -255,6 +255,37 @@ const Homescreen = (props) => {
 		toggleShowDelete(!showDelete)
 	}
 
+	/* *
+	 * Handles undo and redo through keyboard presses
+	 * @param {KeyboardEvent} ev a KeyboardDown event
+	 */
+	const handleKeypressTransaction = async(ev) => {
+		let platform = window.navigator.platform;
+		let mac = platform.toLowerCase().indexOf('mac') >= 0;
+		if (mac) {
+			if (ev.code.toLowerCase() === 'keyz' && ev.metaKey && !ev.shiftKey && !ev.repeat){
+				console.log('1')
+				if (props.tps.hasTransactionToUndo()) tpsUndo();
+			}
+			else if (ev.code.toLowerCase() == 'keyz' && ev.metaKey && ev.shiftKey && !ev.repeat) {
+				console.log('2')
+
+				if (props.tps.hasTransactionToRedo()) tpsRedo();
+			}
+		}else{
+			if (ev.code.toLowerCase() == 'keyz' && ev.ctrlKey) {
+				console.log('3')
+				if (props.tps.hasTransactionToUndo()) tpsUndo();
+			}
+			else if (ev.code.toLowerCase() == 'keyy' && ev.ctrlKey) {
+				console.log('4')
+				if (props.tps.hasTransactionToRedo()) tpsRedo();
+			}
+		}
+	}
+
+	window.addEventListener('keydown', handleKeypressTransaction);
+
 	return (
 		<WLayout wLayout="header-lside">
 			<WLHeader>
