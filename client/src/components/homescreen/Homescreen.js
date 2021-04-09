@@ -17,7 +17,6 @@ import { UpdateListField_Transaction,
 	EditItem_Transaction } 				from '../../utils/jsTPS';
 import WInput from 'wt-frontend/build/components/winput/WInput';
 
-
 const Homescreen = (props) => {
 
 	let todolists 							= [];
@@ -34,6 +33,7 @@ const Homescreen = (props) => {
 	const [DeleteTodoItem] 			= useMutation(mutations.DELETE_ITEM);
 	const [AddTodolist] 			= useMutation(mutations.ADD_TODOLIST);
 	const [AddTodoItem] 			= useMutation(mutations.ADD_ITEM);
+	const [applySorts]				= useMutation(mutations.APPLY_SORT);
 
 
 	const { loading, error, data, refetch } = useQuery(GET_DB_TODOS);
@@ -74,10 +74,13 @@ const Homescreen = (props) => {
 	const addItem = async () => {
 		let list = activeList;
 		const items = list.items;
-		const lastID = items.length >= 1 ? items[items.length - 1].id + 1 : 0;
+		let greatestID = -1;
+		console.log(items)
+		items.forEach((item)=>greatestID = item.id > greatestID ? item.id : greatestID);
+		greatestID++;
 		const newItem = {
 			_id: '',
-			id: lastID,
+			id: greatestID,
 			description: 'No Description',
 			due_date: 'No Date',
 			assigned_to: 'Unassigned',
@@ -141,7 +144,8 @@ const Homescreen = (props) => {
 			items: [],
 		}
 		const { data } = await AddTodolist({ variables: { todolist: list }, refetchQueries: [{ query: GET_DB_TODOS }] });
-		setActiveList(list)
+		setActiveList(list);
+		refetch();
 		props.tps.clearAllTransactions();
 	};
 
@@ -167,23 +171,63 @@ const Homescreen = (props) => {
 		todolists = copy;
 		console.log(copy);
 		setActiveList(todo);
+		let arrows = document.getElementsByClassName('sort-arrow');
+        while (arrows[0]) arrows[0].remove();
 		refetch();
 	};
 
 	// SORTS
-	const descriptionSorter = (a, b) => {
-		return a.description.localeCompare(b.description);
+	const descriptionSorter = (a, b) => a.description.localeCompare(b.description);
+	const dateSorter = (a, b) => {
+		if (a.due_date.toLowerCase() === "no date") return 1;
+		if (b.due_date.toLowerCase() === 'no date') return -1;
+		return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
 	}
-	const sortDescription = () => {
+	const statusSorter = (a, b) => a.completed ? -1 : 1;
+	const assignedSorter = (a, b) => a.assigned_to.localeCompare(b.assigned_to);
+
+	const sortDescription = async() => {
 		let copy = clone(activeList);
+		console.log(copy);
 		copy.items.sort(descriptionSorter);
 		if (sorts[0]) copy.items.reverse();
-		setSorts([!sorts[0], sorts[1], sorts[2]]);
+		// const { data } = await applySorts({ variables: {_id : activeList._id, todolist: activeList}, refetchQueries: [{ query: GET_DB_TODOS }] });
+		setSorts([!sorts[0], sorts[1], sorts[2], sorts[3]]);
 		setActiveList(copy);
 		refetch();
 	}
 
-	const clone = (object) => JSON.parse(JSON.stringify(activeList));
+	const sortDate = () => {
+		let copy = clone(activeList);
+		// console.log(copy);
+		copy.items.sort(dateSorter);
+		if (sorts[1]) copy.items.reverse();
+		setSorts([sorts[0], !sorts[1], sorts[2], sorts[3]]);
+		setActiveList(copy);
+		refetch();
+	}
+
+	const sortStatus = () => {
+		let copy = clone(activeList);
+		console.log(copy);
+		copy.items.sort(statusSorter);
+		if (sorts[2]) copy.items.reverse();
+		setSorts([sorts[0], sorts[1], !sorts[2], sorts[3]]);
+		setActiveList(copy);
+		refetch();
+	}
+
+	const sortAssigned = () => {
+		let copy = clone(activeList);
+		// console.log(copy);
+		copy.items.sort(assignedSorter);
+		if (sorts[3]) copy.items.reverse();
+		setSorts([sorts[0], sorts[1], sorts[2], !sorts[3]]);
+		setActiveList(copy);
+		refetch();
+	}
+
+	const clone = (object) => JSON.parse(JSON.stringify(object));
 	/*
 		Since we only have 3 modals, this sort of hardcoding isnt an issue, if there
 		were more it would probably make sense to make a general modal component, and
@@ -258,6 +302,10 @@ const Homescreen = (props) => {
 									canRedo={()=>props.tps.hasTransactionToRedo()}
 
 									descSort={sortDescription}
+									dateSort={sortDate}
+									statusSort={sortStatus}
+									assignedSort={sortAssigned}
+									sorts={sorts}
 								/>
 							</div>
 						:

@@ -164,6 +164,14 @@ module.exports = {
 			listItems = found.items;
 			return (found.items);
 
+		},
+
+		applySort: async(_, args) => {
+			const { _id } = args;
+			const objectId = new ObjectId(_id);
+			const deleted = await Todolist.deleteOne({_id: objectId});
+			if(deleted) return true;
+			else return false;
 		}
 
 	}
