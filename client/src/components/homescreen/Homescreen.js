@@ -190,7 +190,7 @@ const Homescreen = (props) => {
 	const statusSorter = (a, b) => a.completed ? -1 : 1;
 	const assignedSorter = (a, b) => a.assigned_to.localeCompare(b.assigned_to);
 
-	const sortDescription = async() => {
+	const sortDescription = () => {
 		let copy = clone(activeList);
 		console.log(copy);
 		copy.items.sort(descriptionSorter);
