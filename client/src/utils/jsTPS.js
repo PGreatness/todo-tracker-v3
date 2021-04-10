@@ -3,6 +3,46 @@ export class jsTPS_Transaction {
     doTransaction() {};
     undoTransaction () {};
 }
+
+export class DoSort_Transaction extends jsTPS_Transaction {
+    constructor(_id, type, previouslySorted, prev, update, callback) {
+        super();
+        this._id = _id;
+        this.type = type;
+        this.previouslySorted = previouslySorted;
+        this.prev = prev;
+        this.update = update;
+        this.callback = callback;
+    }
+
+    async doTransaction() {
+        const { data } = await this.updateFunction(
+            {
+                variables: {
+                    _id: this._id,
+                    previouslySorted: this.previouslySorted,
+                    type: this.type,
+                    prev: this.prev,
+                    update: this.update,
+                }
+        });
+        return data;
+    }
+
+    async undoTransaction() {
+        const { data } = await this.updateFunction(
+            {
+                variables: {
+                    _id: this._id,
+                    previouslySorted: this.previouslySorted,
+                    type: this.type,
+                    prev: this.update,
+                    update: this.prev,
+                }
+        });
+        return data;
+    }
+}
 /*  Handles list name changes, or any other top level details of a todolist that may be added   */
 export class UpdateListField_Transaction extends jsTPS_Transaction {
     constructor(_id, field, prev, update, callback) {
