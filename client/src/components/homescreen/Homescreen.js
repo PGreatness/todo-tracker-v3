@@ -192,7 +192,7 @@ const Homescreen = (props) => {
 
 	const sortDescription = () => {
 		let copy = clone(activeList);
-		console.log(copy);
+		if (Object.keys(copy)[0] == null) return;
 		copy.items.sort(descriptionSorter);
 		if (sorts[0]) copy.items.reverse();
 		// const { data } = await applySorts({ variables: {_id : activeList._id, todolist: activeList}, refetchQueries: [{ query: GET_DB_TODOS }] });
@@ -203,6 +203,7 @@ const Homescreen = (props) => {
 
 	const sortDate = () => {
 		let copy = clone(activeList);
+		if (Object.keys(copy)[0] == null) return;
 		// console.log(copy);
 		copy.items.sort(dateSorter);
 		if (sorts[1]) copy.items.reverse();
@@ -213,6 +214,7 @@ const Homescreen = (props) => {
 
 	const sortStatus = () => {
 		let copy = clone(activeList);
+		if (Object.keys(copy)[0] == null) return;
 		console.log(copy);
 		copy.items.sort(statusSorter);
 		if (sorts[2]) copy.items.reverse();
@@ -224,6 +226,7 @@ const Homescreen = (props) => {
 	const sortAssigned = () => {
 		let copy = clone(activeList);
 		// console.log(copy);
+		if (Object.keys(copy)[0] == null) return;
 		copy.items.sort(assignedSorter);
 		if (sorts[3]) copy.items.reverse();
 		setSorts([sorts[0], sorts[1], sorts[2], !sorts[3]]);
